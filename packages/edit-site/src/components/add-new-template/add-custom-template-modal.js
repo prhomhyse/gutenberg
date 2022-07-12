@@ -10,7 +10,6 @@ import {
 	Modal,
 	SearchControl,
 	TextHighlight,
-	__experimentalText as Text,
 	__experimentalHeading as Heading,
 	__unstableComposite as Composite,
 	__unstableUseCompositeState as useCompositeState,
@@ -202,8 +201,12 @@ function AddCustomTemplateModal( { onClose, onSelect, entityForSuggestions } ) {
 			{ ! showSearchEntities && (
 				<>
 					<p>
-						{ __(
-							'Select whether to create a single template for all items or a specific one.'
+						{ sprintf(
+							// translators: %s: Lowercase Label to signify all items. E.g.: 'all Posts'. 'all Pages', 'all Categories', 'all Authors', etc.
+							__(
+								'Select whether to create a single template for %s or a specific one.'
+							),
+							entityForSuggestions.labels.all_items.toLowerCase()
 						) }
 					</p>
 					<Flex
@@ -222,12 +225,6 @@ function AddCustomTemplateModal( { onClose, onSelect, entityForSuggestions } ) {
 							<Heading level={ 5 }>
 								{ entityForSuggestions.labels.all_items }
 							</Heading>
-							<Text as="span">
-								{
-									// translators: The user is given the choice to set up a template for all items of a post type or taxonomy, or just a specific one.
-									__( 'For all items' )
-								}
-							</Text>
 						</FlexItem>
 						<FlexItem
 							isBlock
@@ -236,14 +233,12 @@ function AddCustomTemplateModal( { onClose, onSelect, entityForSuggestions } ) {
 							} }
 						>
 							<Heading level={ 5 }>
-								{ entityForSuggestions.labels.singular_name }
+								{ sprintf(
+									// translators: %s: Name for one object e.g 'Post'. 'Page', 'Category', 'Author', etc.
+									__( 'Specific %s' ),
+									entityForSuggestions.labels.singular_name
+								) }
 							</Heading>
-							<Text as="span">
-								{
-									// translators: The user is given the choice to set up a template for all items of a post type or taxonomy, or just a specific one.
-									__( 'For a specific item' )
-								}
-							</Text>
 						</FlexItem>
 					</Flex>
 				</>
