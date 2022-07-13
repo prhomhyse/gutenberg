@@ -58,8 +58,8 @@ function gutenberg_get_layout_style( $selector, $layout, $has_block_gap_support 
 		if ( $content_size || $wide_size ) {
 			$declarations[ "$selector > :where(:not(.alignleft):not(.alignright))" ] = array(
 				'max-width'    => $all_max_width_value,
-				'margin-left'  => 'auto !important;',
-				'margin-right' => 'auto !important;',
+				'margin-left'  => 'auto !important',
+				'margin-right' => 'auto !important',
 			);
 
 			$declarations[ "$selector > .alignwide" ] = array( 'max-width' => $wide_max_width_value );
