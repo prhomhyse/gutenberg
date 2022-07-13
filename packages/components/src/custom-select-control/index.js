@@ -65,6 +65,7 @@ export default function CustomSelectControl( {
 	options: items,
 	onChange: onSelectedItemChange,
 	value: _selectedItem,
+	onHighlightedIndexChange,
 } ) {
 	const {
 		getLabelProps,
@@ -83,6 +84,7 @@ export default function CustomSelectControl( {
 			? { selectedItem: _selectedItem }
 			: undefined ),
 		stateReducer,
+		onHighlightedIndexChange,
 	} );
 
 	function getDescribedBy() {
