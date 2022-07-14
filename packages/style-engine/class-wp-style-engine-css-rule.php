@@ -28,17 +28,18 @@ class WP_Style_Engine_CSS_Rule {
 	/**
 	 * The selector declarations.
 	 *
-	 * Contains an array of WP_Style_Engine_CSS_Declarations objects.
+	 * Contains a WP_Style_Engine_CSS_Declarations object.
 	 *
-	 * @var WP_Style_Engine_CSS_Declarations[]
+	 * @var WP_Style_Engine_CSS_Declarations
 	 */
-	protected $declarations = array();
+	protected $declarations;
 
 	/**
 	 * Constructor
 	 *
-	 * @param string                             $selector     The CSS selector.
-	 * @param WP_Style_Engine_CSS_Declarations[] $declarations An array of WP_Style_Engine_CSS_Declarations objects.
+	 * @param string                                 $selector     The CSS selector.
+	 * @param array|WP_Style_Engine_CSS_Declarations $declarations An array of declarations (property => value pairs),
+	 *                                                             or a WP_Style_Engine_CSS_Declarations object.
 	 */
 	public function __construct( $selector = '', $declarations = array() ) {
 		$this->set_selector( $selector );
@@ -49,24 +50,47 @@ class WP_Style_Engine_CSS_Rule {
 	 * Set the selector.
 	 *
 	 * @param string $selector The CSS selector.
+	 *
+	 * @return WP_Style_Engine_CSS_Rule Returns the object to allow chaining of methods.
 	 */
 	public function set_selector( $selector ) {
 		if ( empty( $selector ) ) {
 			return;
 		}
-		$this->selector = esc_html( $selector );
+		$this->selector = $selector;
+
+		return $this;
 	}
 
 	/**
 	 * Set the declarations.
 	 *
-	 * @param WP_Style_Engine_CSS_Declarations[] $declarations An array of WP_Style_Engine_CSS_Declarations objects.
+	 * @param array|WP_Style_Engine_CSS_Declarations $declarations An array of declarations (property => value pairs),
+	 *                                                             or a WP_Style_Engine_CSS_Declarations object.
+	 *
+	 * @return WP_Style_Engine_CSS_Rule Returns the object to allow chaining of methods.
 	 */
 	public function set_declarations( $declarations ) {
-		if ( $declarations instanceof WP_Style_Engine_CSS_Declarations ) {
-			$declarations = array( $declarations );
+		$is_declarations_object = ! is_array( $declarations );
+		$declarations_array     = $is_declarations_object ? $declarations->get_declarations() : $declarations;
+
+		if ( null === $this->declarations && $is_declarations_object ) {
+			$this->declarations = $declarations;
+		} elseif ( null === $this->declarations ) {
+			$this->declarations = new WP_Style_Engine_CSS_Declarations( $declarations_array );
 		}
-		$this->declarations = array_merge( $this->declarations, $declarations );
+		$this->declarations->add_declarations( $declarations_array );
+
+		return $this;
+	}
+
+	/**
+	 * Get the declarations object.
+	 *
+	 * @return WP_Style_Engine_CSS_Declarations
+	 */
+	public function get_declarations() {
+		return $this->declarations;
 	}
 
 	/**
@@ -84,11 +108,6 @@ class WP_Style_Engine_CSS_Rule {
 	 * @return string
 	 */
 	public function get_css() {
-		$css = $this->get_selector() . ' {';
-		foreach ( $this->declarations as $declaration ) {
-			$css .= $declaration->get_declarations_string();
-		}
-		$css .= '}';
-		return $css;
+		return $this->get_selector() . ' {' . $this->declarations->get_declarations_string() . '}';
 	}
 }
